@@ -1481,7 +1481,21 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   // I18N ENGINE v2: comprehensive post-render language swap
   // Runs AFTER all rendering. Handles every Chinese UI string.
   // ═════════════════════════════════════════════════════════
-  var IS_EN = (meta.lang === 'en') || (!meta.lang && (navigator.language || '').toLowerCase().indexOf('zh') < 0);
+  var IS_EN = (localStorage.getItem('vizreport-lang') === 'en') || (!localStorage.getItem('vizreport-lang') && (meta.lang === 'en' || (!meta.lang && (navigator.language || '').toLowerCase().indexOf('zh') < 0)));
+  // Language toggle button (top-right, next to related links)
+  (function addLangToggle() {
+    var toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.style.cssText = 'font-family:var(--mono);font-size:.82rem;color:var(--cyan-hi);background:var(--cyan-soft);border:1px solid var(--border);border-radius:7px;padding:5px 12px;cursor:pointer;margin-left:8px;transition:color .15s,border-color .15s';
+    toggle.textContent = IS_EN ? '中文' : 'EN';
+    toggle.title = IS_EN ? '切换到中文' : 'Switch to English';
+    toggle.addEventListener('click', function() {
+      localStorage.setItem('vizreport-lang', IS_EN ? 'zh' : 'en');
+      location.reload();
+    });
+    var badgeRow = document.getElementById('metaBadges');
+    if (badgeRow) badgeRow.appendChild(toggle);
+  })();
   if (IS_EN) {
     // 1) Walk every text node and replace
     (function walkAll(root) {
@@ -1539,8 +1553,20 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
           [/（链接已拦截：(.*)）/, '(Link blocked: $1)'],
           [/：按值筛选/, ': Filter by value'],
           [/（占\s*(\d+)%，共\s*([\d,]+)）/, ' ($1% of $2)'],
+          [/，共\s*([\d,]+)/g, ', of $1'],
           [/值：\s*([\d,]+)/, 'Value: $1'],
-          [/偏好经浏览器\s*localStorage\s*全局保存.*$/, 'Preferences saved via localStorage (shared across pages).']
+          [/偏好经浏览器\s*localStorage\s*全局保存.*$/, 'Preferences saved via localStorage (shared across pages).'],
+          [/（点表头排序.*?）/g, ''],
+          [/排序：原序/, 'Sort: Original'],
+          [/排序：降序/, 'Sort: Descending'],
+          [/排序：升序/, 'Sort: Ascending'],
+          [/^排序：/, 'Sort: '],
+          [/原序/, 'Original'],
+          [/降序(?!\s)/, 'Descending'],
+          [/升序(?!\s)/, 'Ascending'],
+          [/阶段\s*(\d+)/, 'Stage $1'],
+          [/（空）/, '(empty)'],
+          [/主题/, 'Theme']
         ];
         for (var p = 0; p < patterns.length; p++) {
           var newT = t.replace(patterns[p][0], patterns[p][1]);
@@ -1590,6 +1616,36 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
 
     // 5) Update html lang
     document.documentElement.setAttribute('lang', 'en');
+    // 6) MutationObserver: re-translate dynamically added/changed text
+    var _i18nBusy = false;
+    var _i18nObs = new MutationObserver(function(muts) {
+      if (_i18nBusy) return;
+      _i18nBusy = true;
+      muts.forEach(function(m) {
+        if (m.addedNodes) {
+          m.addedNodes.forEach(function(nd) {
+            if (nd.nodeType === 3) {
+              var t = nd.textContent;
+              for (var pi = 0; pi < patterns.length; pi++) {
+                var nt = t.replace(patterns[pi][0], patterns[pi][1]);
+                if (nt !== t) { nd.textContent = nt; break; }
+              }
+              if (map[nd.textContent.trim()]) nd.textContent = map[nd.textContent.trim()];
+            } else if (nd.nodeType === 1) {
+              nd.querySelectorAll('*').forEach(function(el) {
+                var t2 = el.textContent;
+                for (var pj = 0; pj < patterns.length; pj++) {
+                  var nt2 = t2.replace(patterns[pj][0], patterns[pj][1]);
+                  if (nt2 !== t2) { el.textContent = nt2; break; }
+                }
+              });
+            }
+          });
+        }
+      });
+      _i18nBusy = false;
+    });
+    _i18nObs.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   // ── 回顶 ──
