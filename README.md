@@ -1,138 +1,114 @@
 <p align="center">
-  <img src="docs/assets/social-preview.png" alt="VizReport — Rich Interactive Reports. One File. Zero Dependencies." width="100%">
+  <img src="docs/assets/social-preview.png" alt="VizReport" width="100%">
 </p>
 
-<h1 align="center">VizReport</h1>
+# VizReport
 
-<p align="center">
-  <strong>Rich interactive reports for everyone. One file. Zero dependencies.</strong>
-</p>
+**Rich interactive reports. One file. Zero dependencies.**
 
-<p align="center">
-  <sub><a href="README.zh-CN.md">中文文档</a> · <a href="https://magicalyu.github.io/vizreport">Live Demo</a></sub>
-</p>
+[中文文档](README.zh-CN.md) | [Live Demo](https://magicalyuyu.github.io/vizreport/)
 
 ---
 
-## What is VizReport?
+## The Problem
 
-VizReport is a Claude Code / agent skill that transforms any research, analysis, or project data into a **self-contained interactive HTML report**. No build tools, no CDN dependencies, no server required — just one `.html` file that opens in any modern browser.
+AI agents produce research reports as Markdown. Hundreds of lines of flat text. No charts, no tables you can sort, no way to navigate without scrolling endlessly. Reading the fifth report of the day, your eyes glaze over.
 
-**The report IS the demo.** [Click here to experience it live →](https://magicalyu.github.io/vizreport)
+We built VizReport because we were tired of this:
 
-## Why VizReport?
+- **Visualization gap**: Markdown renders as plain paragraphs. Numbers blur together. Trends are invisible without charts.
+- **Interaction gap**: You cannot sort a Markdown table. You cannot filter by a tag. You cannot collapse a section you do not need. You cannot adjust the text size.
+- **Sharing friction**: Send a `.md` file and the recipient needs a renderer. Send a VizReport and they double-click. Done.
 
-| Feature | VizReport | share-html | html-report-skill |
-|---------|-----------|------------|-------------------|
-| Layout templates | 2 (report + cardwall) | 5 styles | 1 |
-| Content block types | 13 (charts, timeline, flow, mindmap...) | Static paragraphs | Static paragraphs |
-| Charts (pure SVG, zero-dep) | ✅ bar / hbar / line / donut | ❌ | ❌ |
-| Sortable & filterable tables | ✅ 3-state sort + row filter + column filter | ❌ | ❌ |
-| TOC navigation | ✅ Sticky tree + collapsible + draggable | ❌ | ❌ |
-| Theme | ✅ Light/dark toggle + width slider | Fixed | Fixed |
-| Offline (no CDN) | ✅ | ✅ | ❌ |
-| QA automation | ✅ Playwright 50+ assertions + impeccable | ❌ | ❌ |
+## The Solution
+
+VizReport is an agent skill that transforms the same content into a **self-contained interactive HTML file**:
+
+- Charts rendered as pure SVG with hover tooltips (no CDN, works offline)
+- Tables with three-state sorting, keyword filtering, and per-column value filters
+- A sticky table of contents with collapsible sections
+- Light and dark themes with persistent preferences
+- Adjustable content width and five-step font sizing
+- All in one `.html` file, approximately 50-80 KB
+
+The report you are reading right now ([Live Demo](https://magicalyuyu.github.io/vizreport/)) is a VizReport file. Every feature described here can be tested on that page.
+
+## What It Looks Like
+
+![VizReport demo](docs/assets/demo.gif)
+
+![VizReport features](docs/assets/screenshot-features.png)
 
 ## Quick Start
 
-### Install as Claude Code Skill
+Install as a Claude Code skill:
 
 ```bash
 npx skills add MagicalYuYu/vizreport
 ```
 
-### Generate a Report
+Then ask your agent:
 
-Just tell Claude:
+> Turn this research into a visual report
 
-> "Turn this research into a visual report"
+The skill selects the appropriate layout (narrative report or cardwall dashboard), generates the data, and produces a single HTML file.
 
-Or use any agent that supports the skills standard. The agent will:
-1. Pick the right layout (narrative → `report`, list → `cardwall`)
-2. Generate the data island (JSON)
-3. Inject it into a template
-4. Run QA gates (optional but recommended)
-
-### Manual Use (No Agent Required)
-
-1. Download `templates/report.template.html`
-2. Open it in any text editor
-3. Find `<script id="aos-data">` and replace the JSON with your content
-4. Save and open in a browser
+No agent? Download a template from `templates/`, edit the JSON data island, and open in a browser.
 
 ## Content Blocks
 
-| Block | Use Case |
-|-------|----------|
-| `h` (level 1/2) | Section headings (auto TOC) |
-| `p` | Paragraphs with **bold**, `code`, [links](https://example.com) |
-| `ul` | Bullet lists |
-| `stats` | KPI cards with numbers |
-| `chart` | bar / hbar / line / donut (pure SVG, hover tooltips) |
-| `cards` | Mini card grids |
-| `table` | Sortable + filterable comparison tables |
-| `callout` | Highlighted notes (info / warning / danger / success) |
-| `quote` | Block quotes with attribution |
-| `img` | Images (local or remote, with fallback) |
-| `timeline` | Roadmap / milestone timelines |
-| `flow` | Process flows (horizontal ≤4 steps, vertical >4) |
-| `mindmap` | Concept maps (HTML/CSS, auto text wrapping) |
+VizReport supports thirteen content block types:
 
-## Interactive Features
+| Category | Blocks |
+|----------|--------|
+| Text | Heading (2 levels), paragraph (bold, code, links), bullet list, quote |
+| Data | Stat cards, charts (bar, horizontal bar, line, donut), tables |
+| Visual | Timeline, process flow, concept map (mindmap) |
+| Media | Images with captions, highlighted callouts |
 
-- **🔍 Search** across titles, tags, and content
-- **📊 Sort** tables by clicking headers (3-state: asc → desc → original)
-- **📋 Filter** by row keywords or per-column values (Excel-style)
-- **📈 Chart hover** shows detailed tooltips with percentages
-- **🌲 Collapsible sections** — click any heading to fold/unfold
-- **🎨 Theme toggle** — light/dark with persistent preference
-- **📏 Width slider** — pixel-precise content width (600–1800px)
-- **字号 A+/A−** — 5-step font size with memory
-- **🗺️ Draggable TOC** — reposition the sidebar anywhere
-- **🖨️ Print-ready** — auto switches to light theme, expands all sections
+All charts are rendered as inline SVG with zero external dependencies. All tables support sorting and filtering out of the box.
+
+## Comparison with Plain Markdown
+
+| Aspect | Markdown | VizReport |
+|--------|----------|-----------|
+| Charts | Not supported natively | Interactive SVG with hover details |
+| Tables | Static, no sorting | Three-state sort plus row and column filtering |
+| Navigation | Linear scrolling only | Sticky TOC with collapsible sections |
+| Themes | Reader-dependent | Light and dark toggle, saved across visits |
+| Text sizing | Reader-dependent | Built-in five-step control |
+| Sharing | Requires a Markdown renderer | Double-click any HTML file |
+| Offline | Depends on viewer | Zero network requests |
 
 ## Browser Compatibility
 
-| Browser | Support |
-|---------|---------|
-| Chrome / Edge (2018+) | ✅ Full |
-| Firefox (2018+) | ✅ Full |
-| Safari (macOS/iOS) | ✅ Full |
-| Mobile browsers | ✅ Responsive |
-| Offline / air-gapped | ✅ Zero network requests |
-| IE 11 | ❌ Not supported |
+Chrome, Firefox, Safari, and Edge (2018 and later). Mobile responsive. Works fully offline.
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────┐
-│              Single HTML File               │
-├─────────────────────────────────────────────┤
-│  <script id="aos-data">                     │
-│    { meta, blocks: [...] }   ← Your data   │
-│  </script>                                  │
-│  <style> CSS tokens + themes </style>      │
-│  <script> Renderer (vanilla JS) </script>  │
-└─────────────────────────────────────────────┘
-         No build step · No CDN · No server
++-------------------------------------------+
+|            Single HTML File               |
++-------------------------------------------+
+|  <script id="aos-data">                   |
+|    { meta, blocks: [...] }  <- Your data  |
+|  </script>                                |
+|  <style> CSS tokens + themes </style>    |
+|  <script> Renderer (vanilla JS) </script>|
++-------------------------------------------+
+        No build step. No CDN. No server.
 ```
 
 ## Report Index
 
-Generate a searchable index of all your reports:
+Generate a searchable index page for all your reports:
 
 ```bash
 python scripts/build_index.py
 ```
 
-Creates `showcase-index.html` with card/list/detail views, search, pin/hide, and iframe preview.
+Produces a self-contained `showcase-index.html` with card, list, and detail views. Search, pin, hide, and iframe preview are built in.
 
 ## License
 
 MIT
-
----
-
-<p align="center">
-  <sub>Built with <a href="https://github.com/MagicalYuYu/vizreport">VizReport</a> itself. The <a href="https://magicalyu.github.io/vizreport">live demo</a> is a VizReport report.</sub>
-</p>
