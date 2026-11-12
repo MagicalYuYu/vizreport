@@ -1556,7 +1556,15 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
           [/，共\s*([\d,]+)/g, ', of $1'],
           [/值：\s*([\d,]+)/, 'Value: $1'],
           [/偏好经浏览器\s*localStorage\s*全局保存.*$/, 'Preferences saved via localStorage (shared across pages).'],
-          [/（点表头排序.*?）/g, ''],
+          [/^生成于\s*(.*)/, 'Generated on $1'],
+          [/点表头排序/g, 'click header to sort'],
+          [/列筛选/g, 'column filter'],
+          [/，?点.*?排序.*?筛选.*?）/, ')'],
+          [/值：\s*([\d,]+)\s*（占\s*(\d+)%，共\s*([\d,]+)）/, 'Value: $1 ($2% of $3)'],
+          [/值：\s*([\d,]+)/, 'Value: $1'],
+          [/（占\s*(\d+)%，共\s*([\d,]+)）/, ' ($1% of $2)'],
+          [/，共\s*([\d,]+)/g, ', of $1'],
+          [/（共\s*([\d,]+)）/, ' (of $1)'],
           [/排序：原序/, 'Sort: Original'],
           [/排序：降序/, 'Sort: Descending'],
           [/排序：升序/, 'Sort: Ascending'],
@@ -1569,13 +1577,25 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
           [/主题/, 'Theme']
         ];
         for (var p = 0; p < patterns.length; p++) {
-          var newT = t.replace(patterns[p][0], patterns[p][1]);
-          if (newT !== t) { node.textContent = newT; break; }
+          t = t.replace(patterns[p][0], patterns[p][1]);
         }
+        if (t !== node.textContent) node.textContent = t;
       });
     })(document.body);
 
-    // 2) Replace placeholders
+    // 2) Replace data-t2 tooltip attributes (not reachable by TreeWalker)
+    document.querySelectorAll('[data-t2]').forEach(function(el) {
+      var v = el.getAttribute('data-t2');
+      if (!v || !/[\u4e00-\u9fff]/.test(v)) return;
+      v = v.replace(/值：\s*([\d,]+)\s*（占\s*(\d+)%，共\s*([\d,]+)）/, 'Value: $1 ($2% of $3)');
+      v = v.replace(/值：\s*([\d,]+)/, 'Value: $1');
+      v = v.replace(/（占\s*(\d+)%，共\s*([\d,]+)）/, ' ($1% of $2)');
+      v = v.replace(/，共\s*([\d,]+)/g, ', of $1');
+      v = v.replace(/（共\s*([\d,]+)）/, ' (of $1)');
+      el.setAttribute('data-t2', v);
+    });
+
+    // 3) Replace placeholders
     document.querySelectorAll('[placeholder]').forEach(function(el) {
       var p = el.getAttribute('placeholder');
       if (p.indexOf('搜索') >= 0 || p.indexOf('筛选') >= 0) {
