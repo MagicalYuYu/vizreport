@@ -354,7 +354,8 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
       }
     ],
     "lang_toggle": {
-      "label": "English",
+      "current": "中文",
+      "label": "EN",
       "href": "index.html"
     },
     "snapshot_note": "你正在看的是一份 VizReport 实况报告。[查看源码](https://github.com/MagicalYuYu/vizreport/blob/main/docs/index.html)——就一个 HTML 文件。",
@@ -976,14 +977,23 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
     return '<a class="rchip" href="' + esc(safeHref(r.href) || '#') + '" target="_blank" rel="noopener noreferrer">' + esc(r.label) + '</a>';
   }).join('');
   if (rel) $('#metaBadges').insertAdjacentHTML('afterend', '<div class="related"><span class="rl">' + (IS_EN ? 'Related:' : '相关资源：') + '</span>' + rel + '</div>');
-  // 语言切换按钮（v2.0: 固定右上角，meta.lang_toggle 驱动）
+  // 语言切换按钮（标准 EN / 中文 设计：当前语言亮，另一语言暗，点击切换）
   if (meta.lang_toggle) {
-    var lt = document.createElement('a');
-    lt.href = meta.lang_toggle.href;
-    lt.textContent = meta.lang_toggle.label;
-    lt.style.cssText = 'position:fixed;top:18px;right:22px;z-index:100;font-family:var(--mono);font-size:.88rem;color:var(--text);text-decoration:none;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:7px 18px;cursor:pointer;box-shadow:0 2px 10px rgba(15,23,42,.10);transition:color .15s,border-color .15s';
-    lt.addEventListener('mouseenter', function(){ lt.style.borderColor = 'var(--accent)'; lt.style.color = 'var(--accent-hi)'; });
-    lt.addEventListener('mouseleave', function(){ lt.style.borderColor = 'var(--border)'; lt.style.color = 'var(--text)'; });
+    var lt = document.createElement('div');
+    lt.style.cssText = 'position:fixed;top:18px;right:22px;z-index:100;font-family:var(--mono);font-size:.85rem;display:flex;align-items:center;gap:0;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;padding:5px 14px;box-shadow:0 2px 10px rgba(15,23,42,.10)';
+    var ltCur = document.createElement('span');
+    ltCur.textContent = meta.lang_toggle.current;
+    ltCur.style.cssText = 'color:var(--accent-hi);font-weight:600;cursor:default';
+    var ltSep = document.createElement('span');
+    ltSep.textContent = ' / ';
+    ltSep.style.cssText = 'color:var(--faint);font-weight:400';
+    var ltOther = document.createElement('a');
+    ltOther.href = meta.lang_toggle.href;
+    ltOther.textContent = meta.lang_toggle.label;
+    ltOther.style.cssText = 'color:var(--faint);text-decoration:none;cursor:pointer;transition:color .15s';
+    ltOther.addEventListener('mouseenter', function(){ ltOther.style.color = 'var(--text)'; });
+    ltOther.addEventListener('mouseleave', function(){ ltOther.style.color = 'var(--faint)'; });
+    lt.appendChild(ltCur); lt.appendChild(ltSep); lt.appendChild(ltOther);
     document.body.appendChild(lt);
   }
 
@@ -1394,7 +1404,7 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   // I18N ENGINE v2: comprehensive post-render language swap
   // Runs AFTER all rendering. Handles every Chinese UI string.
   // ═════════════════════════════════════════════════════════
-  var IS_EN = (localStorage.getItem('vizreport-lang') === 'en') || (!localStorage.getItem('vizreport-lang') && (meta.lang === 'en' || (!meta.lang && (navigator.language || '').toLowerCase().indexOf('zh') < 0)));
+  var IS_EN = (meta.lang === 'en');
   if (IS_EN) {
     // 1) Walk every text node and replace
     (function walkAll(root) {
