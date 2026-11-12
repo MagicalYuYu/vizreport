@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/social-preview.png" alt="VizReport" width="100%">
+  <img src="docs/assets/social-preview-zh.png" alt="VizReport" width="100%">
 </p>
 
 <h1 align="center">VizReport</h1>
@@ -35,9 +35,9 @@ VizReport 是一个 Agent Skill，把同样的内容转化为**自包含的交�
 
 ## 效果展示
 
-![VizReport 演示](docs/assets/demo.gif)
+![VizReport 演示](docs/assets/demo-zh.gif)
 
-![VizReport 功能](docs/assets/screenshot-features.png)
+![VizReport 功能](docs/assets/screenshot-features-zh.png)
 
 ## 快速开始
 
