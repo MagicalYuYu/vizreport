@@ -196,8 +196,8 @@ body.lay-side .toc{position:static;max-height:none;overflow:visible;border:1px s
 .rpt-chart .tools button:hover{color:var(--text)}
 .rpt-chart .axis{stroke:var(--border);stroke-width:1}
 .rpt-chart .gridline{stroke:var(--border);stroke-width:1;stroke-dasharray:3 4;opacity:.7}
-.rpt-chart .vlab,.rpt-chart .xlab{fill:var(--muted);font-size:14px}
-.rpt-chart .cval{fill:var(--text);font-size:14px;font-weight:600}
+.rpt-chart .vlab,.rpt-chart .xlab{fill:var(--muted);font-size:15px}
+.rpt-chart .cval{fill:var(--text);font-size:16px;font-weight:600}
 .rpt-chart .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:12px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
 .rpt-chart .legend .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:baseline}
 .chart-tip{position:fixed;z-index:80;pointer-events:none;background:var(--rail-bg);border:1px solid var(--border);border-radius:8px;box-shadow:0 4px 14px rgba(15,23,42,.2);padding:8px 12px;font-family:var(--mono);font-size:.8rem;color:var(--text);max-width:300px;display:none;line-height:1.7}
@@ -349,7 +349,7 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
     "updated": "2026-11-12",
     "related": [
       {
-        "label": "★ GitHub Repository",
+        "label": "GitHub Repository",
         "href": "https://github.com/MagicalYuYu/vizreport"
       },
       {
@@ -469,38 +469,38 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
       "head": [
         "Feature",
         "VizReport",
-        "share-html",
-        "html-report-skill",
-        "delivery-dashboard"
+        "Static HTML Templates",
+        "Basic Report Tools",
+        "CDN Chart Tools"
       ],
       "rows": [
         [
-          "Content blocks",
-          "13 types",
-          "Static only",
-          "Static only",
-          "Static only"
+          "Content block types",
+          "13 (charts, timelines, mindmaps...)",
+          "Static paragraphs",
+          "Static paragraphs",
+          "Static paragraphs"
         ],
         [
-          "Charts (SVG)",
-          "bar/hbar/line/donut",
-          "❌",
-          "❌",
-          "ECharts (CDN)"
+          "Charts",
+          "Pure SVG (bar/line/donut), hover tooltips",
+          "None",
+          "None",
+          "ECharts via CDN"
         ],
         [
           "Table sorting",
           "3-state + column filter",
-          "❌",
-          "❌",
-          "❌"
+          "None",
+          "None",
+          "None"
         ],
         [
           "TOC navigation",
-          "Sticky + collapsible + draggable",
-          "❌",
-          "❌",
-          "❌"
+          "Sticky tree + collapsible + draggable",
+          "None",
+          "None",
+          "None"
         ],
         [
           "Themes",
@@ -511,38 +511,31 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
         ],
         [
           "Offline (no CDN)",
-          "✅",
-          "✅",
-          "❌",
-          "❌"
+          "Yes",
+          "Yes",
+          "No",
+          "No"
         ],
         [
           "QA automation",
           "Playwright 50+ assertions",
-          "❌",
-          "❌",
-          "❌"
-        ],
-        [
-          "Report index",
-          "✅ Auto-generated",
-          "❌",
-          "❌",
-          "GitHub Pages"
+          "None",
+          "None",
+          "None"
         ],
         [
           "Mindmap",
-          "✅ HTML/CSS auto-wrap",
-          "❌",
-          "❌",
-          "❌"
+          "HTML/CSS auto-wrap",
+          "None",
+          "None",
+          "None"
         ],
         [
           "Timeline",
-          "✅ Vertical + states",
-          "❌",
-          "❌",
-          "❌"
+          "Vertical + state colors",
+          "None",
+          "None",
+          "None"
         ]
       ]
     },
@@ -1481,6 +1474,123 @@ footer .fmeta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
   if (meta.source_note) lines += '<div>' + mdLite(meta.source_note) + '</div>';
   $('#footNotes').innerHTML = lines;
   $('#footMeta').innerHTML = '<span class="badge">生成于 ' + new Date().toISOString().slice(0, 10) + '</span>';
+
+
+
+  // ═════════════════════════════════════════════════════════
+  // I18N ENGINE v2: comprehensive post-render language swap
+  // Runs AFTER all rendering. Handles every Chinese UI string.
+  // ═════════════════════════════════════════════════════════
+  var IS_EN = (meta.lang === 'en') || (!meta.lang && (navigator.language || '').toLowerCase().indexOf('zh') < 0);
+  if (IS_EN) {
+    // 1) Walk every text node and replace
+    (function walkAll(root) {
+      var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+      var nodes = [];
+      var n;
+      while ((n = w.nextNode())) nodes.push(n);
+      nodes.forEach(function(node) {
+        var t = node.textContent;
+        // Exact replacements
+        var map = {
+          '目录': 'Contents', '全部展开': 'Expand All', '全部收起': 'Collapse All',
+          '阅读设置（全局保存）': 'Reading Settings',
+          '显示': 'Show', '隐藏': 'Hide', '状态': 'Status', '标签': 'Tags',
+          '排序：默认': 'Sort: Default', '评分 ↓': 'Score', '名称 A→Z': 'Name A→Z', '状态分组序': 'Status',
+          '↺ 重置': 'Reset', '↺ 恢复默认': 'Reset', '↺ 清空筛选': 'Clear Filters',
+          '全选': 'Select All', '清空': 'Clear All', '（空）': '(empty)',
+          '已完成': 'Done', '当前': 'Current', '计划': 'Planned', '风险': 'At Risk',
+          '总计': 'Total', '相关资源：': 'Related:',
+          '示例数据 SAMPLE': 'SAMPLE DATA',
+          '没有匹配的条目。': 'No matching entries.',
+          '生成于': 'Generated on',
+          '重置全部偏好与目录位置': 'Reset All Preferences',
+          '正文居中·目录贴邻': 'Centered / TOC Adjacent',
+          '目录+正文整体居中': 'TOC + Content Centered',
+          '正文居中·目录贴屏幕边缘': 'Centered / TOC at Edge',
+          '放大字号': 'Increase font size', '缩小字号': 'Decrease font size',
+          '切换昼夜主题': 'Toggle theme', '阅读设置': 'Settings',
+          '回到顶部': 'Back to top', '页面工具（随时可用）': 'Page tools',
+          '切换到浅色主题': 'Switch to light theme', '切换到深色主题': 'Switch to dark theme',
+          '目录侧栏': 'TOC Sidebar', '章节默认状态': 'Section Default',
+          '全部折叠': 'Collapse All', '布局模式': 'Layout Mode', '正文宽度': 'Content Width',
+          '搜索条目': 'Search entries', '筛选表格行': 'Filter table rows',
+          '点表头排序': 'Click header to sort', '列筛选': 'Column filter',
+          '按值筛选': 'Filter by value', '行': 'rows',
+          '排序：': 'Sort: ', '原序': 'Original', '降序': 'Descending', '升序': 'Ascending',
+          '展开/收起子目录': 'Expand/Collapse',
+          '主题': '主题',
+          '阶段': 'Stage '
+        };
+        if (map[t.trim()]) {
+          node.textContent = node.textContent.replace(t.trim(), map[t.trim()]);
+          return;
+        }
+        // Pattern replacements (badges, counts, etc.)
+        var patterns = [
+          [/^快照\s*(.*)/, 'Snapshot $1'],
+          [/(\d+)\s*个章节/, '$1 sections'],
+          [/(\d+)\s*个内容块/, '$1 blocks'],
+          [/(\d+)\s*个标签/, '$1 tags'],
+          [/(\d+)\s*项条目/, '$1 items'],
+          [/均分\s*([\d.]+)/, 'Avg $1'],
+          [/^显示\s*(\d+)\s*\/\s*(\d+)/, 'Showing $1 / $2'],
+          [/^表：\s*(.*)/, 'Table: $1'],
+          [/（链接已拦截：(.*)）/, '(Link blocked: $1)'],
+          [/：按值筛选/, ': Filter by value'],
+          [/（占\s*(\d+)%，共\s*([\d,]+)）/, ' ($1% of $2)'],
+          [/值：\s*([\d,]+)/, 'Value: $1'],
+          [/偏好经浏览器\s*localStorage\s*全局保存.*$/, 'Preferences saved via localStorage (shared across pages).']
+        ];
+        for (var p = 0; p < patterns.length; p++) {
+          var newT = t.replace(patterns[p][0], patterns[p][1]);
+          if (newT !== t) { node.textContent = newT; break; }
+        }
+      });
+    })(document.body);
+
+    // 2) Replace placeholders
+    document.querySelectorAll('[placeholder]').forEach(function(el) {
+      var p = el.getAttribute('placeholder');
+      if (p.indexOf('搜索') >= 0 || p.indexOf('筛选') >= 0) {
+        el.setAttribute('placeholder', p.indexOf('搜索') >= 0 ? 'Search titles, tags, content... (press /)' : 'Filter rows...');
+      }
+    });
+
+    // 3) Replace select options (settings, sort)
+    document.querySelectorAll('option').forEach(function(opt) {
+      var v = opt.textContent.trim();
+      var optMap = {
+        '显示': 'Show', '隐藏': 'Hide',
+        '全部展开': 'Expand All', '全部折叠': 'Collapse All',
+        '正文居中·目录贴邻': 'Centered / TOC Adjacent',
+        '目录+正文整体居中': 'TOC + Content Centered',
+        '正文居中·目录贴屏幕边缘': 'Centered / TOC at Edge',
+        '排序：默认': 'Sort: Default', '评分 ↓': 'Score', '名称 A→Z': 'Name A→Z', '状态分组序': 'Status'
+      };
+      if (optMap[v]) opt.textContent = optMap[v];
+    });
+
+    // 4) Replace aria-labels and titles
+    document.querySelectorAll('[aria-label],[title]').forEach(function(el) {
+      ['aria-label', 'title'].forEach(function(attr) {
+        var v = el.getAttribute(attr);
+        if (!v) return;
+        var attrMap = {
+          '目录': 'Contents', '放大字号': 'Increase font size', '缩小字号': 'Decrease font size',
+          '切换昼夜主题': 'Toggle theme', '阅读设置': 'Settings', '回到顶部': 'Back to top',
+          '切换到浅色主题': 'Switch to light', '切换到深色主题': 'Switch to dark',
+          '页面工具（随时可用）': 'Page tools', '按此列筛选': 'Filter by this column',
+          '展开/收起子目录': 'Expand/Collapse', '正文宽度像素值': 'Content width in pixels',
+          '筛选表格行': 'Filter table rows', '搜索报告': 'Search reports'
+        };
+        if (attrMap[v]) el.setAttribute(attr, attrMap[v]);
+      });
+    });
+
+    // 5) Update html lang
+    document.documentElement.setAttribute('lang', 'en');
+  }
 
   // ── 回顶 ──
   document.getElementById('backTop').addEventListener('click', function(){

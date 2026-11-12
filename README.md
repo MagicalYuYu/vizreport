@@ -2,11 +2,11 @@
   <img src="docs/assets/social-preview.png" alt="VizReport" width="100%">
 </p>
 
-# VizReport
+<h1 align="center">VizReport</h1>
 
-**Rich interactive reports. One file. Zero dependencies.**
+<p align="center"><strong>Rich interactive reports. One file. Zero dependencies.</strong></p>
 
-[中文文档](README.zh-CN.md) | [Live Demo](https://magicalyuyu.github.io/vizreport/)
+<p align="center"><sub><a href="README.zh-CN.md">中文文档</a> · <a href="https://magicalyuyu.github.io/vizreport/">Live Demo</a></sub></p>
 
 ---
 
