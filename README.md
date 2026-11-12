@@ -12,13 +12,13 @@
 
 ## The Problem
 
-AI agents produce research reports as Markdown. Hundreds of lines of flat text. No charts, no tables you can sort, no way to navigate without scrolling endlessly. Reading the fifth report of the day, your eyes glaze over.
+AI agents produce research reports as Markdown. Hundreds of lines of flat text. No charts. No sortable tables. No navigation. You just scroll. And scroll. By the fifth report of the day, your brain has checked out.
 
 We built VizReport because we were tired of this:
 
 - **Visualization gap**: Markdown renders as plain paragraphs. Numbers blur together. Trends are invisible without charts.
-- **Interaction gap**: You cannot sort a Markdown table. You cannot filter by a tag. You cannot collapse a section you do not need. You cannot adjust the text size.
-- **Sharing friction**: Send a `.md` file and the recipient needs a renderer. Send a VizReport and they double-click. Done.
+- **Interaction gap**: You cannot sort a Markdown table. You cannot filter by a tag. You cannot collapse a section you don't need. You cannot adjust text size.
+- **Sharing friction**: Send a `.md` file and they need to install a renderer. Send a VizReport — everyone has a browser, right? — and they just double-click. That's it.
 
 ## The Solution
 
